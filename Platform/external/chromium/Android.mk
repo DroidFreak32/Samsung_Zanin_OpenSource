@@ -443,7 +443,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/third_party/libevent \
     $(LOCAL_PATH)/third_party/libjingle/overrides \
     $(LOCAL_PATH)/third_party/libjingle/source \
-    vendor/google/libraries/autofill 
+    vendor/google/libraries/autofill
 
 # Chromium uses several third party libraries and headers that are already
 # present on Android, but in different include paths. Generate a set of
@@ -495,7 +495,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_C_INCLUDES)
 
 LOCAL_WHOLE_STATIC_LIBRARIES += libevent modp_b64 dmg_fp libcutils
-LOCAL_SHARED_LIBRARIES := libstlport libexpat libcrypto libssl libz libicuuc libicui18n libsqlite libcutils libdl 
+LOCAL_SHARED_LIBRARIES := libstlport libexpat libcrypto libssl libz libicuuc libicui18n libsqlite libcutils libdl
 
 LOCAL_PRELINK_MODULE := false
 

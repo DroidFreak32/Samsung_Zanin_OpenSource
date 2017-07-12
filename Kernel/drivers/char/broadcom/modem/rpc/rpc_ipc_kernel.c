@@ -49,6 +49,7 @@ the GPL, without Broadcom's express prior written consent.
 #include <linux/proc_fs.h>	/* Necessary because we use proc fs */
 #include <linux/seq_file.h>	/* for seq_file */
 
+
 #include <linux/broadcom/bcm_major.h>
 #include <linux/broadcom/ipc_sharedmemory.h>
 #include <linux/broadcom/ipcinterface.h>
@@ -2508,7 +2509,7 @@ int RpcDbgDumpHistoryLogging(int type, int level)
 	RpcOutputContext_t outContext;
 	int offset = 0;
 
-	memset(&outContext, 0, sizeof(RpcOutputContext_t));
+       memset(&outContext, 0, sizeof(RpcOutputContext_t));
 
 	outContext.type = type;
 

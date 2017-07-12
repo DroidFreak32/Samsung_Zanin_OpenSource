@@ -596,7 +596,7 @@ TextRunWalker::TextRunWalker(const TextRun& run, int startingX, int startingY, c
 #endif
         m_item.string = m_run.characters();
         m_item.stringLength = m_run.length();
-  //  }
+ //   }
     reset();
 }
 

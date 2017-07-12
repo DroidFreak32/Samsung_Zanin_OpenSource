@@ -290,8 +290,8 @@ static volatile int v3d_flags;
 static v3d_job_t *v3d_job_head, *v3d_job_tail, *v3d_job_free_list;
 static spinlock_t v3d_job_free_list_spinlock;
 
-volatile v3d_job_t *v3d_job_curr = NULL;
-volatile int suspend_pending = 0;
+volatile v3d_job_t *v3d_job_curr;
+volatile int suspend_pending;
 
 /* Semaphore to lock between ioctl and thread for shared variable access
  * WaitQue on which thread will block for job post or isr_completion or timeout
@@ -483,7 +483,6 @@ static void v3d_job_remove(struct file *filp, v3d_job_t *p_v3d_wait_job)
 					    ("Trying to free current job[0x%08x]",
 					     (u32)last_match_job);
 					//Reset V3D to stop executing current job
-
 					if (v3d_job_curr->job_status == V3D_JOB_STATUS_RUNNING)
 						v3d_reset();
 					v3d_job_kill((v3d_job_t *)v3d_job_curr,

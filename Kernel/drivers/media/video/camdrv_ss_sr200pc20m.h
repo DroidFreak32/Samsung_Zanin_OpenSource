@@ -2509,6 +2509,7 @@ const regs_t sr200pc20m_scene_party_indoor_regs[] =
 0x8a70, 
 
 /* ISO_200 */
+0x0320,
 0xb037,
 0xb137,
 0xb240,
@@ -2914,7 +2915,7 @@ const regs_t sr200pc20m_scene_fall_color_regs[] =
 	0xff14, /* 200ms DELAY */
 };
 
-static const u16 sr200pc20m_scene_nightshot_Normal[] = {
+const regs_t sr200pc20m_scene_nightshot_Normal[] = {
 
 //WB Auto
 	0x0322,
@@ -3034,7 +3035,7 @@ static const u16 sr200pc20m_scene_nightshot_Normal[] = {
 0xff14, // 200ms DELAY
 };
 
-static const u16 sr200pc20m_scene_nightshot_Dark[] = {
+const regs_t sr200pc20m_scene_nightshot_Dark[] = {
 
 //WB Auto
 	0x0322,
@@ -5641,6 +5642,7 @@ const regs_t sr200pc20m_scene_party_indoor_regs_60hz[] =
 	0x8a08,
 
 /* ISO_200 */
+0x0320,
 0xb037,
 0xb137,
 0xb240,
@@ -6037,7 +6039,7 @@ const regs_t sr200pc20m_scene_fall_color_regs_60hz[] =
 	0xff14, /* 200ms DELAY */
 };
 
-static const u16 sr200pc20m_scene_nightshot_Normal_60hz[] = {
+const regs_t sr200pc20m_scene_nightshot_Normal_60hz[] = {
 
 //WB Auto
 	0x0322,
@@ -6157,7 +6159,7 @@ static const u16 sr200pc20m_scene_nightshot_Normal_60hz[] = {
 0xff14, // 200ms DELAY
 };
 
-static const u16 sr200pc20m_scene_nightshot_Dark_60hz[] = {
+const regs_t sr200pc20m_scene_nightshot_Dark_60hz[] = {
 
 //WB Auto
 	0x0322,

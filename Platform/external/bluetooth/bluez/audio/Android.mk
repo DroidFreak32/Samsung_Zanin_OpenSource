@@ -90,6 +90,10 @@ LOCAL_C_INCLUDES:= \
 LOCAL_SHARED_LIBRARIES := \
 	libcutils
 
+ifneq ($(findstring DGLOBALCONFIG_BLUETOOTH_APT_X_SUPPORT=TRUE, $(COMMON_GLOBAL_CFLAGS)),)
+LOCAL_SHARED_LIBRARIES += libbt-aptx-4.0.3
+LOCAL_REQUIRED_MODULES := libbt-aptx-4.0.3
+endif
 
 ifneq ($(wildcard system/bluetooth/legacy.mk),)
 LOCAL_STATIC_LIBRARIES := \

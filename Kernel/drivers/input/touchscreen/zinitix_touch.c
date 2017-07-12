@@ -3750,6 +3750,7 @@ static int zinitix_touch_probe(struct i2c_client *client,
 
 	ts_power_control(touch_dev, POWER_ON);
 
+	msleep(CHIP_ON_DELAY); ///adding for the delay.
 	zinitix_debug_msg("i2c check function \r\n");
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		printk(KERN_ERR "error : not compatible i2c function \r\n");

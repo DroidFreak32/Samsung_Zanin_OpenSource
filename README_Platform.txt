@@ -19,17 +19,14 @@ case 1) bluetooth : should add 'audio.a2dp.default' to PRODUCT_PACKAGES
 case 2) e2fsprog : should add 'e2fsck' to PRODUCT_PACKAGES
 case 3) libexifa : should add 'libexifa' to PRODUCT_PACKAGES
 case 4) libjpega : should add 'libjpega' to PRODUCT_PACKAGES
-case 5) libbtio  : should add 'libbtio' to PRODUCT_PACKAGES
-case 6) KeyUtils : should add 'libkeyutils' to PRODUCT_PACKAGES
-case 7) bluetooth-health : should add 'bluetooth-health' to PRODUCT_PACKAGES
-case 8) bluetoothtest\bcm_dut : should add 'bcm_dut' to PRODUCT_PACKAGES
-case 9) libasound : should add 'libasound' to PRODUCT_PACKAGES
-case 10) audio\alsaplugin : should add 'ibasound_module_pcm_bcmfilter' to PRODUCT_PACKAGES
+case 5) KeyUtils : should add 'libkeyutils' to PRODUCT_PACKAGES
+case 6) bluetoothtest\bcm_dut : should add 'bcm_dut' to PRODUCT_PACKAGES
+case 7) alsa-lib : should add 'libasound' to PRODUCT_PACKAGES
+case 8) audio\alsaplugin : should add 'ibasound_module_pcm_bcmfilter' to PRODUCT_PACKAGES
 
 	ex.) [build\target\product\core.mk] - add all module name for case 1 ~ 10 at once
 		
-		PRODUCT_PACKAGES += bluetooth-health \
-					libbtio \
+		PRODUCT_PACKAGES += 
 					e2fsck \
 					libexifa \
 					libjpega \

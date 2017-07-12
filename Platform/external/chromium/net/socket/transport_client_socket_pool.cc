@@ -425,12 +425,11 @@ ConnectJob*
 base::TimeDelta
     TransportClientSocketPool::TransportConnectJobFactory::ConnectionTimeout()
     const {
-#if SAMSUNG_CHANGES
+#if SAMSUNG_CHANGES  
   if (SecNativeFeature::getInstance()->getInteger(CscFeatureTagWeb_SetTcpConnTimeoutAs) > 0) {
     return base::TimeDelta::FromSeconds(SecNativeFeature::getInstance()->getInteger(CscFeatureTagWeb_SetTcpConnTimeoutAs));
   }
 #endif
-
   return base::TimeDelta::FromSeconds(kTransportConnectJobTimeoutInSeconds);
 }
 

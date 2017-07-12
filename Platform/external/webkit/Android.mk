@@ -127,7 +127,8 @@ LOCAL_C_INCLUDES := \
 	external/skia/src/ports \
 	external/sqlite/dist \
 	frameworks/base/core/jni/android/graphics \
-	frameworks/base/include 
+	frameworks/base/include
+
 
 # Add Source/ for the include of <JavaScriptCore/config.h> from WebCore/config.h
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
@@ -344,7 +345,6 @@ LOCAL_SHARED_LIBRARIES := \
 	libutils \
 	libui \
 	libz \
-    
 
 # We have to fake out some headers when using stlport.
 LOCAL_C_INCLUDES += \

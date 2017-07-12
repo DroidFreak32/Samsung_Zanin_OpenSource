@@ -85,7 +85,6 @@ WebRequestContext::WebRequestContext(bool isPrivateBrowsing)
 #if SAMSUNG_CHANGES
     if(strcmp(SecNativeFeature::getInstance()->getString(CscFeature_Web_AddCharSetToHttpHeader), "") != 0){
         const char *sCscValue = SecNativeFeature::getInstance()->getString(CscFeature_Web_AddCharSetToHttpHeader);
-
         set_accept_charset(sCscValue);
     }
 #endif

@@ -1028,7 +1028,6 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
     }
 //SISO HTMLComposer End  
 #endif
-
     if (paintInfo.phase != PaintPhaseChildOutlines) {
         if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their

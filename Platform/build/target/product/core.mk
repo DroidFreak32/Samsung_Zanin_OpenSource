@@ -127,8 +127,6 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/init.trace.rc:root/init.trace.rc \
 
 PRODUCT_PACKAGES += \
-          bluetooth-health \
-          libbtio \
           e2fsck \
           libexifa \
           libjpega \
