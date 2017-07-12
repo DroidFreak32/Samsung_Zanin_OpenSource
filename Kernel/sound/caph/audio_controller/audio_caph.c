@@ -962,10 +962,19 @@ static void AUDIO_Ctrl_Process(BRCM_AUDIO_ACTION_en_t action_code,
 
 				app_profile = AUDIO_Policy_Get_Profile(AUDIO_APP_MUSIC);
 				if (app_profile == AUDIO_APP_MUSIC) {
+				//change
+				int pcm_pathID = 0;
 					AUDCTRL_SaveAudioApp(app_profile);
+					//change
+					if (pathID[CTL_STREAM_PANEL_PCMOUT1-1])
+						pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT1-1];
+					else if (pathID[CTL_STREAM_PANEL_PCMOUT2-1])
+						pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT2-1];
+
+					if (pcm_pathID)
 					AUDCTRL_SetAudioMode_ForMusicPlayback(
 						AUDCTRL_GetAudioMode(),
-						pathID[CTL_STREAM_PANEL_PCMOUT1-1],
+						pcm_pathID,
 						FALSE);
 				}
 			}
@@ -1166,10 +1175,20 @@ static void AUDIO_Ctrl_Process(BRCM_AUDIO_ACTION_en_t action_code,
 
 			app_profile = AUDIO_Policy_Get_Profile(AUDIO_APP_MUSIC);
 			if (app_profile == AUDIO_APP_MUSIC) {
+			//change
+			int pcm_pathID = 0;
 				AUDCTRL_SaveAudioApp(app_profile);
+				
+				//change
+					if (pathID[CTL_STREAM_PANEL_PCMOUT1-1])
+						pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT1-1];
+					else if (pathID[CTL_STREAM_PANEL_PCMOUT2-1])
+						pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT2-1];
+
+					if (pcm_pathID)
 				AUDCTRL_SetAudioMode_ForMusicPlayback(
 					AUDCTRL_GetAudioMode(),
-					pathID[CTL_STREAM_PANEL_PCMOUT1-1],
+					pcm_pathID,
 					FALSE);
 			}
 		}
@@ -1565,13 +1584,19 @@ static void AUDIO_Ctrl_Process(BRCM_AUDIO_ACTION_en_t action_code,
 			or music start happend first and then FM stop
 			restore app prof to Music*/
 			if (BRCM_STATE_NORMAL == AUDIO_Policy_GetState()) {
+				int pcm_pathID = 0;
 				AudioApp_t app_prof;
 				app_prof = AUDIO_Policy_Get_Profile(
 						AUDIO_APP_MUSIC);
 				AUDCTRL_SaveAudioApp(app_prof);
+				if (pathID[CTL_STREAM_PANEL_PCMOUT1-1])
+					pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT1-1];
+				else if (pathID[CTL_STREAM_PANEL_PCMOUT2-1])
+					pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT2-1];
+
+				if (pcm_pathID)
 				AUDCTRL_SetAudioMode_ForMusicPlayback(
-				AUDCTRL_GetAudioMode(), pathID[parm_FM->stream],
-								FALSE);
+					AUDCTRL_GetAudioMode(), pcm_pathID, FALSE);
 			}
 			pathID[parm_FM->stream] = 0;
 		}
@@ -1700,6 +1725,22 @@ static void AUDIO_Ctrl_Process(BRCM_AUDIO_ACTION_en_t action_code,
 						AUDCTRL_RestoreIHFmode();
 #endif
 						AUDIO_Policy_RestoreState();
+						//change
+							if (BRCM_STATE_NORMAL == AUDIO_Policy_GetState()) {
+							int pcm_pathID = 0;
+							AudioApp_t app_prof;
+							app_prof = AUDIO_Policy_Get_Profile(AUDIO_APP_MUSIC);
+							AUDCTRL_SaveAudioApp(app_prof);
+
+							if (pathID[CTL_STREAM_PANEL_PCMOUT1-1])
+								pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT1-1];
+							else if (pathID[CTL_STREAM_PANEL_PCMOUT2-1])
+								pcm_pathID = pathID[CTL_STREAM_PANEL_PCMOUT2-1];
+
+							if (pcm_pathID)
+								AUDCTRL_SetAudioMode_ForMusicPlayback(
+									AUDCTRL_GetAudioMode(), pcm_pathID, FALSE);
+						}
 					}
 					break;
 			}

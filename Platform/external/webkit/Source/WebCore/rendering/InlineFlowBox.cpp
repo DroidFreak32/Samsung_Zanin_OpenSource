@@ -39,9 +39,11 @@
 #include "RootInlineBox.h"
 #include "Text.h"
 //SISO_HTMLComposer Start
+
 #if SAMSUNG_CHANGES
 #include "SecNativeFeature.h"
 #endif
+
 //SISO_HTMLComposer End
 
 #include <math.h>
@@ -1006,6 +1008,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     flipForWritingMode(overflowRect);
     overflowRect.move(tx, ty);
+
 #if SAMSUNG_CHANGES
 //SISO HTMLComposer Start    
     if (!paintInfo.rect.intersects(overflowRect)){
@@ -1028,7 +1031,6 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
     }
 //SISO HTMLComposer End  
 #endif
-
     if (paintInfo.phase != PaintPhaseChildOutlines) {
         if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their

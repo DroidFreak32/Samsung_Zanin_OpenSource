@@ -1010,15 +1010,7 @@ void ReplaceSelectionCommand::doApply()
             insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
         }
     }
-//SISO_HTMLComposer start	
-    if (this->isTopLevelCommand() && this->editingAction() == EditActionUnspecified && editingIgnoresContent(insertionPos.deprecatedNode()) && !fragment.isImageFragment()){
-	Node* par = insertionPos.deprecatedNode();
-	while(par && !(par->hasTagName(divTag)))
-	    par = par->parentNode();
-        if(par)
-	    insertionPos = Position(par,(insertionPos.deprecatedNode())->nodeIndex(), Position::PositionIsOffsetInAnchor);
-    }
-//SISO_HTMLComposer end      
+
     // FIXME: When pasting rich content we're often prevented from heading down the fast path by style spans.  Try
     // again here if they've been removed.
     

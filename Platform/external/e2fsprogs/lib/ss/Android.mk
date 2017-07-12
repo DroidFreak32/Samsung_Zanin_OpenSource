@@ -54,10 +54,10 @@ libext2_ss_system_shared_libraries := libc
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(libext2_ss_src_files)
-LOCAL_SHARED_LIBRARIES := $(libext2_ss_shared_libraries)
-LOCAL_SYSTEM_SHARED_LIBRARIES := $(libext2_ss_system_shared_libraries)
 LOCAL_C_INCLUDES := $(libext2_ss_c_includes)
 LOCAL_CFLAGS := $(libext2_ss_cflags)
+LOCAL_SHARED_LIBRARIES := $(libext2_ss_shared_libraries)
+LOCAL_SYSTEM_SHARED_LIBRARIES := $(libext2_ss_system_shared_libraries)
 LOCAL_MODULE := libext2_ss
 LOCAL_MODULE_TAGS := optional
 LOCAL_PRELINK_MODULE := false
@@ -72,6 +72,5 @@ LOCAL_CFLAGS := $(libext2_ss_cflags)
 LOCAL_SHARED_LIBRARIES := $(addsuffix _host, $(libext2_ss_shared_libraries))
 LOCAL_MODULE := libext2_ss_host
 LOCAL_MODULE_TAGS := optional
-LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_HOST_SHARED_LIBRARY)

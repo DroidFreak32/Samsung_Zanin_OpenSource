@@ -38,6 +38,7 @@
 #if SAMSUNG_CHANGES
 #include "SecNativeFeature.h"
 #endif
+
 #define THAI_DO_CHADA 3598
 #define THAI_TO_PATAK 3599
 #define THAI_SARA_U 3640

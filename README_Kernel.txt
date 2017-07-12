@@ -1,5 +1,5 @@
 ################################################################################
-HOW TO BUILD KERNEL FOR GT-B5330_EUR
+HOW TO BUILD KERNEL FOR GT-B5330_SWA
 
 1. How to Build
 	- get Toolchain
@@ -20,5 +20,5 @@ HOW TO BUILD KERNEL FOR GT-B5330_EUR
 4. How to make .tar binary for downloading into target.
 	- change current directory to Kernel/arch/arm/boot
 	- type following command
-	$ tar cvf GT-B5330_EUR.tar zImage
+	$ tar cvf GT-B5330_SWA.tar zImage
 ################################################################################

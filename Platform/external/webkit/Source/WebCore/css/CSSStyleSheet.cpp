@@ -201,10 +201,7 @@ bool CSSStyleSheet::parseStringAtLine(const String& string, bool strict, int sta
 {
     setStrictParsing(strict);
     CSSParser p(strict);
-//SAMSUNG CHANGE ++
-    if (!(string.isEmpty()))
     p.parseSheet(this, string, startLineNumber);
-//SAMSUNG CHANGE --
     return true;
 }
 

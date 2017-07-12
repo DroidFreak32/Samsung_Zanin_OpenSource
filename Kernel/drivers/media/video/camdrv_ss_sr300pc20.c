@@ -563,6 +563,14 @@ int camdrv_ss_sr300pc20_set_preview_start(struct v4l2_subdev *sd)
 			CAM_ERROR_PRINTK( "%s :sr300pc20_init_regs IS FAILED\n",__func__);
 			return -EIO;
 		}
+		 msleep(50);
+	}
+
+	/* Added delay for Entring camera to avoid flickring*/
+	if(state->mode_switch == INIT_DONE_TO_CAMERA_PREVIEW)
+	{
+		msleep(50);         
+ 
 	}
 /*
 	err = camdrv_ss_set_preview_size(sd);
@@ -2137,7 +2145,7 @@ bool camdrv_ss_sensor_init_main(bool bOn, struct camdrv_ss_sensor_cap *sensor)
 	
 	sensor->supported_capture_framesize_list  =  sr300pc20_supported_capture_framesize_list;
 	sensor->supported_number_of_capture_sizes = ARRAY_SIZE(sr300pc20_supported_capture_framesize_list);
-	sensor->skip_frames=2;
+	sensor->skip_frames=0;
 	sensor->fmts 				   = sr300pc20_fmts;
 	sensor->rows_num_fmts		   =ARRAY_SIZE(sr300pc20_fmts);
 

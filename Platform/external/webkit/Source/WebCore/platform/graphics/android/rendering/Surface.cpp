@@ -460,11 +460,10 @@ bool Surface::blitFromContents(Tile* tile)
     // Make sure the screen area we want to blit is contained by the
     // prerendered screen area
     if (!prerenderedInval->screenArea.contains(enclosingScreenDirty)) {
-   //     ALOGD("prerendered->screenArea " INT_RECT_FORMAT " doesn't contain "
-   //             "enclosingScreenDirty " INT_RECT_FORMAT,
-   //             INT_RECT_ARGS(prerenderedInval->screenArea),
-   //             INT_RECT_ARGS(enclosingScreenDirty));
-        ALOGD("prerendered->screenArea :: doesn't contain :: enclosingScreenDirty ");		
+        ALOGD("prerendered->screenArea " INT_RECT_FORMAT " doesn't contain "
+                "enclosingScreenDirty " INT_RECT_FORMAT,
+                INT_RECT_ARGS(prerenderedInval->screenArea),
+                INT_RECT_ARGS(enclosingScreenDirty));
         return false;
     }
     IntPoint origin = prerenderedInval->screenArea.location();

@@ -86,7 +86,10 @@ enum {
 };
 
 struct device *sec_touchscreen;
+struct device *sec_touchkey;
+
 EXPORT_SYMBOL(sec_touchscreen);
+EXPORT_SYMBOL(sec_touchkey);
 extern struct class *sec_class;
 
 struct i2c_client *gb_client;
@@ -114,6 +117,7 @@ static int read_ts_data(u8 address, u8 *buf, int size);
 static ssize_t synaptics_menu_sensitivity_show(struct device *dev, struct device_attribute *attr, char *buf);
 static ssize_t synaptics_home_sensitivity_show(struct device *dev, struct device_attribute *attr, char *buf);
 static ssize_t synaptics_back_sensitivity_show(struct device *dev, struct device_attribute *attr, char *buf);
+static ssize_t synaptics_touchkey_threshold_show(struct device *dev, struct device_attribute *attr, char *buf);
 
 static DEVICE_ATTR(tsp_firm_version_phone, S_IRUGO | S_IWUSR | S_IWOTH | S_IXOTH, phone_firmware_show, NULL);
 static DEVICE_ATTR(tsp_firm_version_panel, S_IRUGO | S_IWUSR | S_IWOTH | S_IXOTH, part_firmware_show, NULL);
@@ -124,6 +128,7 @@ static DEVICE_ATTR(tsp_firm_update_status, S_IRUGO | S_IWUSR | S_IWGRP | S_IXOTH
 static DEVICE_ATTR(touchkey_menu, S_IRUGO, synaptics_menu_sensitivity_show, NULL);
 static DEVICE_ATTR(touchkey_home, S_IRUGO, synaptics_home_sensitivity_show, NULL);
 static DEVICE_ATTR(touchkey_back, S_IRUGO, synaptics_back_sensitivity_show, NULL);
+static DEVICE_ATTR(touchkey_threshold, S_IRUGO, synaptics_touchkey_threshold_show, NULL);
 
 #define MAX_TOUCH_NUM			2
 struct ts_data {
@@ -1387,6 +1392,21 @@ static int __devinit rmi_i2c_probe(struct i2c_client *client,
 	touch_dev->client = client;
 	i2c_set_clientdata(client, touch_dev);
 
+      /* sys fs for touch keys*/
+	sec_touchkey = device_create(sec_class, NULL, 0, rmi_phys, "sec_touchkey");
+	if (IS_ERR(sec_touchkey)) 
+	{
+		dev_err(&client->dev,"Failed to create device for the sysfs1 touchkey\n");
+		ret = -ENODEV;
+	}
+
+ 	if (device_create_file(sec_touchkey, &dev_attr_touchkey_menu) < 0)
+		pr_err("Failed to create device file(%s)!\n", dev_attr_touchkey_menu.attr.name);
+	if (device_create_file(sec_touchkey, &dev_attr_touchkey_back) < 0)
+		pr_err("Failed to create device file(%s)!\n", dev_attr_touchkey_back.attr.name);
+	if (device_create_file(sec_touchkey, &dev_attr_touchkey_threshold) < 0)
+		pr_err("Failed to create device file(%s)!\n", dev_attr_touchkey_threshold.attr.name);
+
     #ifdef SEC_TSP_FACTORY_TEST
 		INIT_LIST_HEAD(&touch_dev->cmd_list_head);
 		for (i = 0; i < ARRAY_SIZE(tsp_cmds); i++)
@@ -1413,7 +1433,7 @@ static int __devinit rmi_i2c_probe(struct i2c_client *client,
 
 	/* Check the new fw. and update */
 	set_fw_version(FW_KERNEL_VERSION, FW_DATE);  
-	fw_updater(client, "force");                                
+	fw_updater(client, "normal");                                
     
 	return 0;
 
@@ -1701,6 +1721,20 @@ static ssize_t synaptics_back_sensitivity_show(struct device *dev, struct device
 	back_sensitivity = touchkey_raw[1];
 
 	return sprintf(buf, "%d\n",  back_sensitivity);
+}
+
+static ssize_t synaptics_touchkey_threshold_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	#if defined (CONFIG_MACH_RHEA_SS_IVORY )
+		u16 touchkey_threshold=25;	//Ivory DS JB using old FW version, hence changed threshold value
+	#else
+		u16 touchkey_threshold=67;
+	#endif
+     
+      printk("[TSP] %s, touchkey_threshold : %d !!! \n", __func__, touchkey_threshold);
+
+
+	return sprintf(buf, "%d\n",  touchkey_threshold);
 }
 
 //////////////////////////////////////test mode /////////////////////////////////////

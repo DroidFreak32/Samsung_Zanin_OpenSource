@@ -58,13 +58,6 @@ ifeq ($(TARGET_BOARD_PLATFORM),mrvl)
 endif
 # SAMSUNG CHANGE --
 
-# SAMSUNG CHANGE ++
-# Control BROADCOM rhea compiling in webkit.
-ifeq ($(TARGET_BOARD_PLATFORM),rhea)
-    SUPPORT_BRCM = true
-endif
-# SAMSUNG CHANGE --
-
 # Read the environment variable to determine if Autofill is compiled.
 # The default is on.
 # is turned on.
@@ -343,8 +336,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libstlport \
 	libutils \
 	libui \
-	libz \
-    
+	libz 
 
 # We have to fake out some headers when using stlport.
 LOCAL_C_INCLUDES += \
@@ -371,13 +363,6 @@ endif
 # Control MARVELL compiling in webkit.
 ifeq ($(SUPPORT_MRVL),true)
 LOCAL_CFLAGS += -DSUPPORT_MRVL=1
-endif
-# SAMSUNG CHANGE --
-
-# SAMSUNG CHANGE ++
-# Control BROADCOM rhea compiling in webkit.
-ifeq ($(SUPPORT_BRCM),true)
-LOCAL_CFLAGS += -DSUPPORT_BRCM=1
 endif
 # SAMSUNG CHANGE --
 

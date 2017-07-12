@@ -402,8 +402,8 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 //+Change xhtml to html (China-Telecom requirement)
     // There are so many Web-Servers that don't follow xhtml standard (parse error on xhtml). But ChinaTelecom requests NOT to display parse error screen.
     // For both mimetype ( "application/xhtml+xml" and "application/vnd.wap.xhtml+xml mime" ), parse document as "text/html"
-#if SAMSUNG_CHANGES   
-	 if(SecNativeFeature::getInstance()->getEnableStatus(CscFeatureTagWeb_ParseXHtmlToHtml)) {
+#if SAMSUNG_CHANGES
+    if(SecNativeFeature::getInstance()->getEnableStatus(CscFeatureTagWeb_ParseXHtmlToHtml)) {
         m_response = r;
         if (r.mimeType() == "application/xhtml+xml") {
             m_response.setMimeType("text/html") ;
@@ -414,13 +414,17 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
         m_documentLoader->setResponse(m_response);
     }
     else
+
 //-Change xhtml to html (China-Telecom requirement)
-    {
+
+{
 #endif
         m_documentLoader->setResponse(r);
 
         m_response = r;
-  //  }
+#if SAMSUNG_CHANGES
+    }
+#endif
 
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;

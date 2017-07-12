@@ -4945,11 +4945,51 @@ const regs_t s5k4ecgx_fps_7_regs[] =
 
 const regs_t s5k4ecgx_fps_10_regs[] = 
 {
+0xFCFCD000,
+0x00287000,
+0x002A02BE,
+0x0F120000,//REG_0TC_PCFG_usFrTimeType
+0x0F120001,//REG_0TC_PCFG_FrRateQualityType
+0x0F1203E8,//REG_0TC_PCFG_usMaxFrTimeMsecMult10//029Ah:15fps
+0x0F1203E8,//REG_0TC_PCFG_usMinFrTimeMsecMult10//029Ah:15fps
+
+0x002A0266,
+0x0F120000,//REG_TC_GP_ActivePrevConfig
+0x002A026A,
+0x0F120001,//REG_TC_GP_PrevOpenAfterChange
+0x002A024E,
+0x0F120001,//REG_TC_GP_NewConfigSync
+0x002A0268,
+0x0F120001,//REG_TC_GP_PrevConfigChanged
+
+0xFFFF0064,
+
 
 };
 
 const regs_t s5k4ecgx_fps_15_regs[] =
 {
+  0xFCFCD000,
+  0x00287000,
+  0x002A02BE,
+  0x0F120000, //REG_0TC_PCFG_usFrTimeType
+  0x0F120001, //REG_0TC_PCFG_FrRateQualityType
+  0x0F12029A, //REG_0TC_PCFG_usMaxFrTimeMsecMult10 //029Ah:15fps
+  0x0F12029A, //REG_0TC_PCFG_usMinFrTimeMsecMult10 //029Ah:15fps
+
+ 
+
+  0x002A0266,
+  0x0F120000, //REG_TC_GP_ActivePrevConfig
+  0x002A026A,
+  0x0F120001, //REG_TC_GP_PrevOpenAfterChange
+  0x002A024E,
+  0x0F120001, //REG_TC_GP_NewConfigSync
+  0x002A0268,
+  0x0F120001, //REG_TC_GP_PrevConfigChanged
+
+  0xFFFF0064,
+
 
 };
 

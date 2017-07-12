@@ -128,7 +128,6 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
           bluetooth-health \
-          libbtio \
           e2fsck \
           libexifa \
           libjpega \
@@ -136,7 +135,8 @@ PRODUCT_PACKAGES += \
           audio.a2dp.default \
           libasound \
           libasound_module_pcm_bcmfilter \
-          bcm_dut
+          bcm_dut\
+	   libbtio 
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)

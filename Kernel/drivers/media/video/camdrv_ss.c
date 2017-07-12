@@ -4887,10 +4887,13 @@ static int camdrv_ss_s_stream(struct v4l2_subdev *sd, int enable)
 	}
 
 	if (!enable) {
-		if (  state->current_mode != PICTURE_MODE && state->mode_switch != PICTURE_CAPTURE_TO_CAMERA_PREVIEW_RETURN ){
+	if (  state->current_mode == PICTURE_MODE ){ // temp fix for CTS issue
+CAM_INFO_PRINTK("%s : delay for picture mode%d\n", __func__,camera_id);
+                 msleep(7);
+}
 			if (tmp_sensor_state_previous==tmp_sensor_state){
 		CAM_INFO_PRINTK("%s : inside enable check\n", __func__);
-		camdrv_ss_set_preview_stop(sd); }}
+		camdrv_ss_set_preview_stop(sd); }
 		atomic_set(&sensor_state, CAMDRV_SS_INITIALIZE_DONE);
 		CAM_INFO_PRINTK("%s : STOP success\n", __func__);
 	}

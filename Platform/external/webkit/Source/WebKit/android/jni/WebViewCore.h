@@ -474,7 +474,6 @@ class WebFeedLink{
         WebCore::VisibleSelection m_VisibleSelection;
         int m_prevEndOffset;
         void saveSelectionController();
-        void resetSelectionController();
         void restorePreviousSelectionController();  
         void simulateDelKeyForCount(int count);
         WTF::String getTextAroundCursor(int count , bool isBefore);
@@ -536,7 +535,6 @@ class WebFeedLink{
 //+Feature_Drag&Drop
         void dropTheDraggedText( int x, int y );
 //+Feature_Drag&Drop
-        WTF::String getSelectedHTMLText();
         //SAMSUNG CHANGES >>
         WebCore::IntRect getBlockBounds(const WebCore::IntPoint& pt);
         WebCore::IntRect getBlockBounds(WebCore::Node* node);

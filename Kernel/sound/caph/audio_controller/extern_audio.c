@@ -813,7 +813,7 @@ void extern_stereo_speaker_off(void)
 	tpa2026_amp_shutdown(); /* IVORY_AMP */
 
 #if defined (CONFIG_EXTERNAL_AMP_GPIO)
-	//audio_gpio_output(AMP_EN,0);
+	audio_gpio_output(AMP_EN,0);
 	audio_gpio_output(RCV_SEL,1);
 	audio_gpio_output(SPK_EN,0);
 #else

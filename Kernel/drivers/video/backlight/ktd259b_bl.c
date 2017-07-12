@@ -237,7 +237,7 @@ struct brt_value brt_table_ktd[] = {
    { 238,  7 },
    { 244,  6 },
    { 250,  5 }, 
-   { MAX_BRIGHTNESS_VALUE,  4 }, 
+   { MAX_BRIGHTNESS_VALUE,  5 }, 
 };
 #endif
 

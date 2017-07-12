@@ -781,7 +781,9 @@ static int dhd_suspend_resume_helper(struct dhd_info *dhd, int val, int force)
 
 	DHD_OS_WAKE_LOCK(dhdp);
 	/* Set flag when early suspend was called */
+	if (dhdp->up)
 	dhdp->in_suspend = val;
+
 	if ((force || !dhdp->suspend_disable_flag) &&
 		dhd_support_sta_mode(dhdp))
 	{
@@ -1773,6 +1775,8 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan)
 		if (ifp == NULL) {
 			DHD_ERROR(("%s: ifp is NULL. drop packet\n",
 				__FUNCTION__));
+			pnext = PKTNEXT(dhdp->osh, pktbuf);
+			PKTSETNEXT(wl->sh.osh, pktbuf, NULL);
 			PKTFREE(dhdp->osh, pktbuf, TRUE);
 			continue;
 		}
@@ -1785,6 +1789,8 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan)
 #endif /* PROP_TXSTATUS_VSDB */
 			DHD_ERROR(("%s: net device is NOT registered yet. drop packet\n",
 			__FUNCTION__));
+			pnext = PKTNEXT(dhdp->osh, pktbuf);
+			PKTSETNEXT(wl->sh.osh, pktbuf, NULL);
 			PKTFREE(dhdp->osh, pktbuf, TRUE);
 			continue;
 		}
@@ -3660,6 +3666,11 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 #if defined(VSDB) && defined(CUSTOMER_HW4)
 	int interference_mode = 3;
 #endif
+
+#ifdef CONFIG_MACH_KONA
+	uint32 ampdu_ba_wsize = 16;
+#endif
+
 	dhd->suspend_bcn_li_dtim = CUSTOM_SUSPEND_BCN_LI_DTIM;
 #ifdef PROP_TXSTATUS
 #ifdef PROP_TXSTATUS_VSDB
@@ -4061,6 +4072,17 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 	bcm_mkiovar("bcn_li_bcn", (char *)&bcn_li_bcn, 4, iovbuf, sizeof(iovbuf));
 	dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0);
 #endif /* ENABLE_BCN_LI_BCN_WAKEUP */
+
+#ifdef CONFIG_MACH_KONA
+	/* Set ampdu ba wsize */
+	bcm_mkiovar("ampdu_ba_wsize", (char *)&ampdu_ba_wsize, 4, iovbuf, sizeof(iovbuf));
+	ret = dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0);
+	if (ret < 0) {
+		DHD_ERROR(("%s Set ampdu_ba_wsize to %d failed%d\n",
+			__FUNCTION__, ampdu_ba_wsize, ret));
+	}
+#endif
+
 
 	/* query for 'ver' to get version info from firmware */
 	memset(buf, 0, sizeof(buf));
@@ -4525,6 +4547,7 @@ void dhd_detach(dhd_pub_t *dhdp)
 			}
 		}
 	}
+	DHD_ERROR(("All interfaces are deleted.\n"));
 
 	/* Clear the watchdog timer */
 	flags = dhd_os_spin_lock(&dhd->pub);
@@ -4533,6 +4556,8 @@ void dhd_detach(dhd_pub_t *dhdp)
 	dhd_os_spin_unlock(&dhd->pub, flags);
 	if (timer_valid)
 		del_timer_sync(&dhd->timer);
+
+	DHD_ERROR(("The watchdog timer cleared. \n"));
 
 	if (dhd->dhd_state & DHD_ATTACH_STATE_THREADS_CREATED) {
 #ifdef DHDTHREAD
@@ -4549,6 +4574,7 @@ void dhd_detach(dhd_pub_t *dhdp)
 	}
 
 #ifdef WL_CFG80211
+	DHD_ERROR(("Start cleaning CFG80211..\n"));
 	if (dhd->dhd_state & DHD_ATTACH_STATE_CFG80211) {
 		wl_cfg80211_detach(NULL);
 		dhd_monitor_uninit();

@@ -61,11 +61,8 @@
 // SAMSUNG CHANGE ++ : flickering issue, http://m.navercast.naver.com/mobile_contents.nhn?contents_id=10325&leafId=1391 > bottom > related contents > flick
 // + We increase this to 448 from 400. We have to reserve 144(previous:96) textures for BaseLayer because of www.livesports.pl blicking issue.
 // WAS:#define MAX_TEXTURE_ALLOCATION ((6+TILE_PREFETCH_DISTANCE*2)*(5+TILE_PREFETCH_DISTANCE*2)*4)
-#if defined(SUPPORT_BRCM) // SAMSUNG CHANGE for low cost model
-#define MAX_TEXTURE_ALLOCATION 400
-#else
+// WAS:#define MAX_TEXTURE_ALLOCATION 400
 #define MAX_TEXTURE_ALLOCATION ((6+TILE_PREFETCH_DISTANCE*2)*(5+TILE_PREFETCH_DISTANCE*2)*4*2) 
-#endif
 // SAMSUNG CHANGE --
 #define TILE_WIDTH 256
 #define TILE_HEIGHT 256

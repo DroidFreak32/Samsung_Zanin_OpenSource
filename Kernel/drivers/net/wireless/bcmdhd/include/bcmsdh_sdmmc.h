@@ -35,6 +35,8 @@
 #define sd_ctrl(x)
 
 #ifdef CUSTOMER_HW4
+#undef sd_err
+#define sd_err(x) do {printf x;} while (0)
 #define sd_trace_hw4	sd_err
 #else
 #define sd_trace_hw4	sd_trace

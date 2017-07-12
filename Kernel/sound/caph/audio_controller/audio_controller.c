@@ -192,6 +192,7 @@ static Boolean isStIHF = FALSE;
 static Boolean isStIHF_stored = FALSE;
 static Boolean stIHF_stored = FALSE;
 #if defined(CONFIG_STEREO_SPEAKER)
+static Boolean isFirstPlayDone = FALSE;
 static Boolean suspendedPowerOnAMP = FALSE;
 static enum ExtSpkrUsage_en_t suspendedAmpUse = NoUse;
 static AUDIO_SINK_Enum_t suspendedAmpSink = AUDIO_SINK_UNDEFINED;
@@ -257,6 +258,7 @@ static struct regulator *vibra_reg;
 #define DELAY_IHFPMU_ON 0*1000
 #define DELAY_PMU_OFF 2*1000
 #define DELAY_BEFORE_PMU_OFF 70*1000
+#define DELAY_CALL_IHFPMU_ON 50*1000
 
 static int wait_bb_on;
 static int wait_hspmu_on = DELAY_HSPMU_ON;
@@ -748,10 +750,8 @@ void AUDCTRL_SetTelephonyMicSpkr(AUDIO_SOURCE_Enum_t source,
 	}
 
 	if (voiceCallSpkr != sink || force == true) {
-		if (force == true) {
 			AUDCTRL_SetTelephonySpkrMute(AUDIO_SINK_UNDEFINED, 1);
 			wait_before_pmu_off = DELAY_BEFORE_PMU_OFF;
-		}
 
 		powerOnExternalAmp(voiceCallSpkr, TelephonyUse,
 				FALSE, FALSE);
@@ -792,14 +792,15 @@ void AUDCTRL_SetTelephonyMicSpkr(AUDIO_SOURCE_Enum_t source,
 	}
 
 	if (voiceCallSpkr != sink || force == true) {
+		wait_ihfpmu_on = DELAY_CALL_IHFPMU_ON;
+
 		powerOnExternalAmp(sink, TelephonyUse,
 				TRUE, FALSE);
 
-		if (force == true) {
+		wait_ihfpmu_on = DELAY_IHFPMU_ON;
 			if (!bDLmuteVoiceCall)
 			AUDCTRL_SetTelephonySpkrMute(AUDIO_SINK_UNDEFINED, 0);
 		}
-	}
 
 	voiceCallSpkr = sink;
 	voiceCallMic = source;
@@ -1744,7 +1745,7 @@ void AUDCTRL_EnablePlay(AUDIO_SOURCE_Enum_t source,
 
 #if defined(CONFIG_STEREO_SPEAKER)
 		// expecting AddPlaySpk, suspend powering AMP on.
-		if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET)) {
+		if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET)&& !isFirstPlayDone) {
 			suspendedPowerOnAMP = TRUE;
 			suspendedAmpUse = FmUse;
 			suspendedAmpSink = sink;
@@ -1770,7 +1771,7 @@ void AUDCTRL_EnablePlay(AUDIO_SOURCE_Enum_t source,
 			/* only power on amp in PMU for the first sink */
 #if defined(CONFIG_STEREO_SPEAKER)
 			// expecting AddPlaySpk, suspend powering AMP on.
-			if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET)) {
+			if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET) && !isFirstPlayDone) {
 				suspendedPowerOnAMP = TRUE;
 				suspendedAmpUse = AudioUse;
 				suspendedAmpSink = sink;
@@ -1788,7 +1789,7 @@ void AUDCTRL_EnablePlay(AUDIO_SOURCE_Enum_t source,
 			/* only power on amp in PMU for the second sink */
 #if defined(CONFIG_STEREO_SPEAKER)
 				// expecting AddPlaySpk, suspend powering AMP on.
-				if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET)) {
+				if (isStIHF && (sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET) && !isFirstPlayDone) {
 					suspendedPowerOnAMP = TRUE;
 					suspendedAmpUse = AudioUse;
 					suspendedAmpSink = second_dev_info.sink;
@@ -1904,7 +1905,9 @@ void AUDCTRL_DisablePlay(AUDIO_SOURCE_Enum_t source,
 		audio_xassert(0, pathID);
 		return;
 	}
-
+#if defined(CONFIG_STEREO_SPEAKER)
+	isFirstPlayDone = TRUE;
+#endif
 	bInPlayback = FALSE;
 	forcedExternalAmpGain = FALSE;
 #ifdef CONFIG_ENABLE_SSMULTICAST
@@ -2559,7 +2562,7 @@ void AUDCTRL_AddPlaySpk(AUDIO_SOURCE_Enum_t source,
 #if defined(CONFIG_STEREO_SPEAKER)
 			// expecting AddPlaySpk, suspend powering AMP on.
 			if (!suspendedPowerOnAMP && isStIHF &&
-				(sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET)) {
+				(sink == AUDIO_SINK_LOUDSPK || sink == AUDIO_SINK_HANDSET) && !isFirstPlayDone) {
 				suspendedPowerOnAMP = TRUE;
 				suspendedAmpUse = AudioUse;
 				suspendedAmpSink = sink;
@@ -2620,6 +2623,9 @@ void AUDCTRL_AddPlaySpk(AUDIO_SOURCE_Enum_t source,
 	}
 
 #if defined(CONFIG_STEREO_SPEAKER)
+	aTrace(LOG_AUDIO_CNTLR, "org_suspendedPowerOnAMP %d suspendedAmpUse %d",
+			org_suspendedPowerOnAMP, suspendedAmpUse);
+			
 	if (/*isStIHF &&*/ org_suspendedPowerOnAMP) {
 		switch (suspendedAmpUse) {
 			case FmUse:
@@ -4299,6 +4305,15 @@ int AUDCTRL_HardwareControl(AUDCTRL_HW_ACCESS_TYPE_en_t access_type,
 		}
 		break;
 
+/* IVORY: AMP NOISE ISSUE */
+		case AUDCTRL_HW_CFG_AMPOFFSHUTDOWN:
+
+			aTrace(LOG_AUDIO_CNTLR, "AUDCTRL_HardwareControl:: AUDCTRL_HW_CFG_AMPOFFSHUTDOWN" "\n");
+			extern_stereo_speaker_off();
+			/*arg2: TRUE or FALSE */
+			break;
+/* IVORY: AMP NOISE ISSUE */
+
 	default:
 		break;
 	}
@@ -4594,6 +4609,10 @@ static void powerOnExternalAmp(AUDIO_SINK_Enum_t speaker,
 
 	case AUDIO_SINK_HANDSET:
 #if defined(CONFIG_STEREO_SPEAKER)
+		if (!use) {
+			audctl_usleep_range(wait_before_pmu_off,
+				wait_before_pmu_off+2000);
+		}
 		extern_stereo_speaker_off(); // to reset stereo output if RCV is selected.
 #endif
 		return;
@@ -4603,6 +4622,10 @@ static void powerOnExternalAmp(AUDIO_SINK_Enum_t speaker,
 		switch (GetAudioModeBySink(speaker)) // AUDIO_SINK_DSP
 		{
 			case AUDIO_MODE_HANDSET:
+				if (!use) {
+					audctl_usleep_range(wait_before_pmu_off,
+						wait_before_pmu_off+2000);
+				}
 				extern_stereo_speaker_off(); // to reset stereo output if RCV is selected.
 				break;
 	default:
@@ -4635,14 +4658,16 @@ static void powerOnExternalAmp(AUDIO_SINK_Enum_t speaker,
 		if (HS_IsOn != TRUE && ampControl == TRUE) {
 			aTrace(LOG_AUDIO_CNTLR,
 				"powerOnExternalAmp power on HS");
-			audioh_start_hs();
-			extern_hs_on();
 
+			audioh_start_hs();
+
+			audctl_usleep_range(wait_hspmu_on,
+				wait_hspmu_on+2000);
+			extern_hs_on();
 			if(AUDCTRL_GetAudioApp() == AUDIO_APP_FM)
 			    wait_hspmu_on = 200*1000;
 			else
 			    wait_hspmu_on = DELAY_HSPMU_ON;
-
 			audctl_usleep_range(wait_hspmu_on,
 				wait_hspmu_on+2000);
 		}
@@ -4666,19 +4691,26 @@ static void powerOnExternalAmp(AUDIO_SINK_Enum_t speaker,
 
 			audctl_usleep_range(wait_before_pmu_off,
 				wait_before_pmu_off+2000);
+ 				
 			if (isStIHF == TRUE)
 				extern_stereo_speaker_off();
 			else
 				extern_ihf_off();
+ 
 			audctl_usleep_range(wait_pmu_off,
 				wait_pmu_off+2000);
 		}
 		IHF_IsOn = FALSE;
 	} else {
+	
 		if (IHF_IsOn != TRUE && ampControl == TRUE) {
 			aTrace(LOG_AUDIO_CNTLR,
 				"powerOnExternalAmp power on IHF");
+
 			audioh_start_ihf();
+
+			audctl_usleep_range(wait_ihfpmu_on,
+				wait_ihfpmu_on+2000);
 			if (isStIHF == TRUE)
 				extern_stereo_speaker_on();
 			else

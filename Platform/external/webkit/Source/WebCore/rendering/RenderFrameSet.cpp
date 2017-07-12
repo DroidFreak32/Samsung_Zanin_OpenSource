@@ -498,7 +498,7 @@ void RenderFrameSet::layout()
     }
 #endif
 //SAMSUNG CHANGE
-    if (flattenFrameSet())      // MPSG100007016
+    if (!flattenFrameSet())
 //SAMSUNG CHANGE		
         positionFramesWithFlattening();
     else

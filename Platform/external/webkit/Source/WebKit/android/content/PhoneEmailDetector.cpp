@@ -93,7 +93,7 @@ bool PhoneEmailDetector::FindContent(const string16::const_iterator& begin,
         } else {
 #endif
             m_foundResult = FindPartialNumber(begin, end - begin, &m_findState);
-      //  }
+    //    }
         // CscFeature_Web_RecognizeTelNumber <<
     }
     if (m_foundResult == FOUND_COMPLETE)
@@ -143,7 +143,9 @@ void FindResetNumber(FindState* state)
     } else {
 #endif
         state->mPattern = (char*) PHONE_PATTERN;
-    //}
+#if SAMSUNG_CHANGES
+    }
+#endif
     // CscFeature_Web_RecognizeTelNumber <<
     state->mStorePtr = state->mStore;
 }

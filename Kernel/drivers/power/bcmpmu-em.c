@@ -43,8 +43,7 @@
 
 #define SAMSUNG_DFT_SOC_RETURN_NODE
 
-static int debug_mask = BCMPMU_PRINT_ERROR |
-			BCMPMU_PRINT_INIT;
+static int debug_mask = 0xFF;
 
 /* static int debug_mask = 0xFF; */
 
@@ -205,6 +204,7 @@ struct bcmpmu_em {
 	wait_queue_head_t wait;
 	struct delayed_work work;
 	struct mutex lock;
+	struct wake_lock wake_lock;
 	struct notifier_block nb;
 	struct bcmpmu_charge_zone *zone;
 	struct bcmpmu_voltcap_map *bvcap;
@@ -316,6 +316,7 @@ static struct pi_mgr_qos_node qos_node;
 static unsigned int em_poll(struct file *file, poll_table *wait);
 static int em_open(struct inode *inode, struct file *file);
 static int em_release(struct inode *inode, struct file *file);
+static int get_update_rate(struct bcmpmu_em *pem);
 
 static const struct file_operations em_fops = {
 	.owner		= THIS_MODULE,
@@ -1541,7 +1542,9 @@ static int update_batt_capacity(struct bcmpmu_em *pem, int *cap)
 	int fg_result_adjusted;
 	static int first_time;
 	int cutoff_cap;
-
+	unsigned long time;
+	time = get_seconds();
+		
 	if (pem->fg_dbg_temp != 0)
 		pem->batt_temp = pem->fg_dbg_temp;
 	pem->fg_zone = update_fg_zone(pem, pem->batt_temp);
@@ -1622,7 +1625,7 @@ static int update_batt_capacity(struct bcmpmu_em *pem, int *cap)
 
 		fg_result_adjusted = fg_result - (fg_result * factor / 100);
 		pem->fg_capacity += fg_result_adjusted;
-		pr_em(REPORT, "%s, fg=%d, fg_adj=%d, fact=%d, hi=%d, lo=%d\n",
+		pr_em(FLOW, "%s, fg=%d, fg_adj=%d, fact=%d, hi=%d, lo=%d\n",
 			__func__, fg_result, fg_result_adjusted, factor,
 			pem->high_cal_factor, pem->low_cal_factor);
 
@@ -1634,6 +1637,11 @@ static int update_batt_capacity(struct bcmpmu_em *pem, int *cap)
 
 		capacity64 = pem->fg_capacity * 100 + pem->fg_capacity_full / 2;
 		capacity = div64_s64(capacity64, pem->fg_capacity_full);
+
+		if ((time - pem->time) * 1000 > get_update_rate(pem)) {
+			pr_em(FLOW, "%s, batt_capacity=%d, capacity=%d\n",
+				__func__, pem->batt_capacity, capacity);
+		}
 
 		if ((is_charger_present(pem)) &&
 			(pem->batt_capacity != 100) &&
@@ -2111,6 +2119,8 @@ static void em_algorithm(struct work_struct *work)
 	int ret;
 	int retry_cnt = 0;
 	int vbus_status = 0;
+	if (!wake_lock_active(&pem->wake_lock))
+		wake_lock(&pem->wake_lock);
 
 	if (first_run == 0) {
 		bcmpmu->fg_enable(bcmpmu, 1);
@@ -2448,6 +2458,10 @@ static void em_algorithm(struct work_struct *work)
 		pem->charge_state, get_update_rate(pem));
 
 	pem->time = get_seconds();
+
+	if (wake_lock_active(&pem->wake_lock))
+		wake_unlock(&pem->wake_lock);
+
 }
 
 static int em_event_handler(struct notifier_block *nb,
@@ -2599,6 +2613,8 @@ static int __devinit bcmpmu_em_probe(struct platform_device *pdev)
 	pem->chrgr_type = PMU_CHRGR_TYPE_NONE;
 	pem->charge_state = CHRG_STATE_IDLE;
 
+	wake_lock_init(&pem->wake_lock, WAKE_LOCK_SUSPEND, "em");
+	
 	pem->batt_recharge = POWER_SUPPLY_STATUS_UNKNOWN;
 	pem->batt_status = POWER_SUPPLY_STATUS_UNKNOWN;
 	pem->batt_health = POWER_SUPPLY_HEALTH_UNKNOWN;
@@ -2848,6 +2864,7 @@ err:
 		&pem->nb);
 	ret = bcmpmu_remove_notifier(BCMPMU_CHRGR_EVENT_CHRG_STATUS,
 		&pem->nb);
+	wake_lock_destroy(&pem->wake_lock);
 	kfree(pem);
 	return ret;
 }
@@ -2874,6 +2891,7 @@ static int __devexit bcmpmu_em_remove(struct platform_device *pdev)
 		&pem->nb);
 	ret = bcmpmu_remove_notifier(BCMPMU_CHRGR_EVENT_CHRG_STATUS,
 		&pem->nb);
+	wake_lock_destroy(&pem->wake_lock);
 	kfree(pem);
 
 	return 0;

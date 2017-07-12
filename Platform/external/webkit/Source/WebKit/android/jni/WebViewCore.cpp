@@ -2610,9 +2610,8 @@ Position WebViewCore::getPreviousPosition(Position& pos , int prevNum)
         ALOGV("!pos.anchorNode()->offsetInCharacters() getPreviousPosition");
 
         if( cnt < prevNum ) {
-            Position prevPos = pos.previous();
-
-            return getPreviousPosition(prevPos , prevNum - cnt);
+            pos = pos.previous();
+            return getPreviousPosition(pos , prevNum - cnt);
         } else {
             return pos;
         }
@@ -2686,9 +2685,9 @@ Position WebViewCore::getNextPosition(Position& pos ,int nextNum)
         __android_log_print(ANDROID_LOG_DEBUG,"webcoreglue", "!pos.anchorNode()->offsetInCharacters() getNextPosition");
 
         if( cnt < nextNum ) {
-            Position nextPos = pos.next();
+            pos = pos.next();
 
-            return getNextPosition(nextPos , nextNum-cnt);
+            return getNextPosition(pos , nextNum-cnt);
         } else {
             return pos;
         }
@@ -2936,13 +2935,6 @@ void WebViewCore::saveSelectionController()
     ALOGV("VIN saveSelectionController called here");
 
     m_VisibleSelection = m_mainFrame->selection()->selection();
-}
-
-void WebViewCore::resetSelectionController()
-{
-    ALOGV("VIN resetSelectionController called here");
-
-    m_VisibleSelection = VisibleSelection();
 }
 
 void WebViewCore::restorePreviousSelectionController()
@@ -3689,19 +3681,6 @@ void WebViewCore::dropTheDraggedText( int x, int y ) {
     selectionContrler->setSelection(newSelection);
 }
 //-Feature_Drag&Drop
-
-WTF::String WebViewCore::getSelectedHTMLText()
-{
-    SelectionController* selectionContrler = m_mainFrame->selection();
-
-    if( !selectionContrler ) return WTF::String();
-
-    PassRefPtr<Range> selectedRange = selectionContrler->toNormalizedRange();
-
-    WTF::String html = createMarkup( selectedRange.get(), 0, AnnotateForInterchange, false );
-
-    return html;
-}
 
 static WebCore::IntRect toContainingView(const WebCore::RenderObject* renderer, const WebCore::IntRect& rendererRect)
 {
@@ -8248,12 +8227,6 @@ static void SaveSelectionController(JNIEnv *env, jobject obj, jint nativeClass)
     viewImpl->saveSelectionController();
 }
 
-static void ResetSelectionController(JNIEnv *env, jobject obj, jint nativeClass)
-{
-    WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
-    viewImpl->resetSelectionController();
-}
-
 static void RestorePreviousSelectionController(JNIEnv *env, jobject obj, jint nativeClass)
 {
     WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
@@ -8317,16 +8290,6 @@ static void DropTheDraggedText(JNIEnv *env, jobject obj, jint nativeClass, jint 
     viewImpl->dropTheDraggedText(x,y );
 }
 //-Feature_Drag&Drop
-
-static jstring GetSelectedHTMLText( JNIEnv *env, jobject obj, jint nativeClass )
-{
-    WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
-
-    WTF::String result = viewImpl->getSelectedHTMLText();
-    if (!result.isEmpty())
-        return wtfStringToJstring(env, result);
-    return 0;
-}
 //SISO_HTMLCOMPOSER end
 
 static void DumpDomTree(JNIEnv* env, jobject obj, jint nativeClass,
@@ -9470,9 +9433,6 @@ static JNINativeMethod gJavaWebViewCoreMethods[] = {
     { "nativeRestorePreviousSelectionController", "(I)V",
      (void*) RestorePreviousSelectionController },
 
-    { "nativeResetSelectionController", "(I)V",
-     (void*) ResetSelectionController },
-
     { "nativeSaveSelectionController", "(I)V",
      (void*) SaveSelectionController },
 
@@ -9528,9 +9488,6 @@ static JNINativeMethod gJavaWebViewCoreMethods[] = {
     { "nativeDropTheDraggedText", "(III)V",
      (void*) DropTheDraggedText },
 //-Feature_Drag&Drop
-
-    { "nativeGetSelectedHTMLText", "(I)Ljava/lang/String;",
-     (void*) GetSelectedHTMLText },
 //SISO_HTMLCOMPOSER end
     { "nativeRegisterURLSchemeAsLocal", "(ILjava/lang/String;)V",
         (void*) RegisterURLSchemeAsLocal },

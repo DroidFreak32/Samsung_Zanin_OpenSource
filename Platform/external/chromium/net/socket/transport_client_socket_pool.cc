@@ -24,6 +24,7 @@
 #include "SecNativeFeatureTagWeb.h"
 #endif
 
+
 using base::TimeDelta;
 
 namespace net {
@@ -430,7 +431,6 @@ base::TimeDelta
     return base::TimeDelta::FromSeconds(SecNativeFeature::getInstance()->getInteger(CscFeatureTagWeb_SetTcpConnTimeoutAs));
   }
 #endif
-
   return base::TimeDelta::FromSeconds(kTransportConnectJobTimeoutInSeconds);
 }
 

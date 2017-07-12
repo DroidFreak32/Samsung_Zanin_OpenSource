@@ -848,7 +848,7 @@ static int camdrv_ss_sr200pc20m_get_iso_speed_rate(struct v4l2_subdev *sd)
 #if 1
     struct i2c_client *client = v4l2_get_subdevdata(sd);
     unsigned short read_value = 0;
-    int GainValue = 0;
+    float GainValue = 0.0;
     int isospeedrating = 100;
 	int rows_num_=0;
 
@@ -859,7 +859,7 @@ static int camdrv_ss_sr200pc20m_get_iso_speed_rate(struct v4l2_subdev *sd)
     camdrv_ss_i2c_write_2_bytes(client, 0x03, 0x20);
     camdrv_ss_i2c_read_1_byte(client, 0xb0, &read_value);
 
-    GainValue = ((read_value / 32) + 0.5);
+    GainValue = ((read_value / 32.0) + 0.5);
 
     if(GainValue < 1.14)
     {
@@ -882,9 +882,10 @@ static int camdrv_ss_sr200pc20m_get_iso_speed_rate(struct v4l2_subdev *sd)
         isospeedrating = 800;
     }
 
-    CAM_ERROR_PRINTK("camdrv_ss_sr200pc20m_get_iso_speed_rate, GainValue =%d, isospeedrating =%d\n", GainValue, isospeedrating );		
+    CAM_ERROR_PRINTK("camdrv_ss_sr200pc20m_get_iso_speed_rate, GainValue =%d, isospeedrating =%d\n", GainValue, isospeedrating );	
+    CAM_ERROR_PRINTK("camdrv_ss_sr200pc20m_get_iso_speed_rate, isospeedrating =%d\n", isospeedrating );	
     
-	   return isospeedrating;
+	return isospeedrating;
 #endif
 	/* no implementation yet */
 //	return -1;

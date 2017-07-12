@@ -971,8 +971,8 @@ static struct i2c_board_info __initdata synaptics_i2c_devices[] = {
 #if defined  (CONFIG_SENSORS_K3DH)
 static struct k3dh_platform_data k3dh_platform_data = {	
 	.orientation = {	
-	-1, 0, 0,
-	0, -1, 0,		
+	1, 0, 0,
+	0, 1, 0,		
 	0, 0, 1},
 };
 #endif

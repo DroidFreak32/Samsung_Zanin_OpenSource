@@ -463,13 +463,8 @@ void LayerAndroid::updateLocalTransformAndClip(const TransformationMatrix& paren
                                 -anchorPointZ());
 
     m_drawTransformUnfudged = m_drawTransform;
-    // SAMSUNG CHANGE ++ : m.naver.com texturing display error.
-    // normal case has adjusted value, but abnormal case doesn't
-    // But other devices which have the same matrix(resolution) are not shown such issue.
-    // it is very weired case. we need to keep checking this case.
-    if (m_drawTransform.isIdentityOrTranslation()) {
-    // WAS: && surface() && surface()->allowTransformFudging()) {
-    // SAMSUNG CHANGE --
+    if (m_drawTransform.isIdentityOrTranslation()
+        && surface() && surface()->allowTransformFudging()) {
         // adjust the translation coordinates of the draw transform matrix so
         // that layers (defined in content coordinates) will align to display/view pixels
 

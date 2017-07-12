@@ -688,7 +688,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     out->stream.get_render_position = out_get_render_position;
 
     out->sample_rate = 44100;
-    out->buffer_size = 512 * 20; // * 2;
+    out->buffer_size = 512 * 20 * 2;
     out->channels = AUDIO_CHANNEL_OUT_STEREO;
     out->format = AUDIO_FORMAT_PCM_16_BIT;
 

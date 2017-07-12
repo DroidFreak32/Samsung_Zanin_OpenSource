@@ -100,8 +100,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-// SAMSUNG CHANGE >>
 #if SAMSUNG_CHANGES
+// SAMSUNG CHANGE >>
 #include "SecNativeFeature.h"
 #include "SecNativeFeatureTagWeb.h"
 #endif
@@ -2767,9 +2767,9 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         }
     }
     
+#if SAMSUNG_CHANGES
 // SAMSUNG CHANGE >>
     if (mainResource) {
-#if SAMSUNG_CHANGES
         if (strcmp(SecNativeFeature::getInstance()->getString(CscFeatureTagWeb_AddWmlToHttpAcceptHeader4), "") != 0 ){
             const char *sCscValue = SecNativeFeature::getInstance()->getString(CscFeatureTagWeb_AddWmlToHttpAcceptHeader4);
             const char *WMLAcceptHeader = "text/html,application/xhtml+xml,text/vnd.wap.wml,application/xml;q=0.9,*/*;q=0.8";
@@ -2796,11 +2796,10 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             }
             delete []tokenBuffer;
         } else {
-#endif
             request.setHTTPAccept(defaultAcceptHeader);
-      //  }
+        }
     }
-
+#endif
 	#ifdef VZW_LTE
 	if((client()->userAgent(request.url())).find("Macintosh;") == -1) 
     {
@@ -2811,6 +2810,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     //add Operator UAP.
     char UAPStr[100] = {0,};	
     char Model[30] = {0,};
+
 #if SAMSUNG_CHANGES
     if(SecNativeFeature::getInstance()->getEnableStatus(TAG_CSCFEATURE_COMMON_USECHAMELEON) == true) {
 // SAMSUNG CHANGE : chameleon >>

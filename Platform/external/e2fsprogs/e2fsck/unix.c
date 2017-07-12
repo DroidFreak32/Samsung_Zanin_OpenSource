@@ -356,10 +356,8 @@ static void check_if_skip(e2fsck_t ctx)
 	if (!defer_check_on_battery)
 		batt = 0;
 
-	if ((ctx->options & E2F_OPT_FORCE) || bad_blocks_file || cflag)
-		return;
-
-	if ((ctx->options & E2F_OPT_FORCE_AT_REPLAY) && journal_replayed)
+	if ((ctx->options & E2F_OPT_FORCE) || bad_blocks_file || cflag ||
+			journal_replayed)
 		return;
 
 	if (ctx->options & E2F_OPT_JOURNAL_ONLY)
